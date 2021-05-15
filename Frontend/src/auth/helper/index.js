@@ -41,13 +41,16 @@ export const authenticate = (data, next) => {
   }
 };
 
-export const isAuthenticated = (email) => {
+export const isAuthenticated = () => {
   if (typeof window == "undefined") {
     return false;
   }
   if (localStorage.getItem("jwt")) {
     const formData = new FormData();
-    formData.append("email", email);
+    formData.append(
+      "email",
+      JSON.parse(localStorage.getItem("jwt")).user.email
+    );
 
     return fetch(`${API}user/token/`, {
       method: "POST",
@@ -55,8 +58,13 @@ export const isAuthenticated = (email) => {
     })
       .then((response) => response.json())
       .then((data) => {
-        //console.log(data.token === JSON.parse(localStorage.getItem("jwt")));
-        return data.token === JSON.parse(localStorage.getItem("jwt"));
+        //console.log(data.token === JSON.parse(localStorage.getItem("jwt")).token);
+        //console.log(data.token);
+        if (data.token !== "") {
+          return data.token === JSON.parse(localStorage.getItem("jwt")).token;
+        } else {
+          return false;
+        }
       })
       .catch((err) => console.error("error", err));
   } else {
@@ -65,9 +73,9 @@ export const isAuthenticated = (email) => {
 };
 
 export const signout = (next) => {
-  const userId = isAuthenticated() && isAuthenticated().user.id;
+  const userId =
+    isAuthenticated() && JSON.parse(localStorage.getItem("jwt")).user.id;
   if (typeof window !== "undefined") {
-    localStorage.removeItem("jwt");
     cartEmpty(() => {});
     //next();
 
@@ -76,6 +84,7 @@ export const signout = (next) => {
     })
       .then((response) => {
         console.log("Signout success");
+        localStorage.removeItem("jwt");
         next();
       })
       .catch((err) => console.error(err));

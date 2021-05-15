@@ -1,24 +1,37 @@
-import React from "react";
+import { React, useState } from "react";
 import ImageHelper from "./helper/imageHelper";
 import { Redirect } from "react-router-dom";
 import { addItemToCart, removeItemFromCart } from "./helper/cartHelper";
+import { isAuthenticated } from "../auth/helper";
 
-//TODO:Deal with this later
-const isAuthenticated = true;
+const Card = ({
+  product,
+  addtoCart = true,
+  removeFromCart = false,
+  reload = undefined,
+  setReload = (f) => f,
+}) => {
+  const [redirect, setRedirect] = useState(false);
+  // const [login, setLogin] = useState(isAuthenticated());
 
-const Card = ({ product, addtoCart = true, removeFromCart = false }) => {
   const cartTitle = product ? product.name : "A photo from pixels";
   const cartDescription = product ? product.description : "Default Description";
   const cartPrice = product ? product.price : "Default Price";
 
   const addToCart = () => {
-    if (isAuthenticated) {
-      addItemToCart(product, () => {});
+    if (isAuthenticated()) {
+      addItemToCart(product, () => setRedirect(true));
       console.log("Added to cart");
     } else {
+      //setLogin(false);
       console.log("Login Please!");
     }
   };
+  // const goToSignin = (login) => {
+  //   if (!login) {
+  //     return <Redirect to="/signin"></Redirect>;
+  //   }
+  // };
 
   const getAredirect = (redirect) => {
     if (redirect) {
@@ -28,7 +41,7 @@ const Card = ({ product, addtoCart = true, removeFromCart = false }) => {
 
   const showAddToCart = (addToCart) => {
     return (
-      addToCart && (
+      addtoCart && (
         <button
           onClick={addToCart}
           className="btn btn-block btn-outline-success mt-2 mb-2"
@@ -46,6 +59,7 @@ const Card = ({ product, addtoCart = true, removeFromCart = false }) => {
           onClick={() => {
             //TODO:Handel This Too
             removeItemFromCart(product.id);
+            setReload(!reload);
             console.log("Product Remove From Cart");
           }}
           className="btn btn-block btn-outline-danger mt-2 mb-2"
@@ -60,6 +74,8 @@ const Card = ({ product, addtoCart = true, removeFromCart = false }) => {
     <div className="card text-white bg-dark border border-info ">
       <div className="card-header lead">{cartTitle}</div>
       <div className="card-body">
+        {getAredirect(redirect)}
+        {/* {goToSignin(login)}*/}
         <ImageHelper product={product} />
         <p className="lead bg-success font-weight-normal text-wrap">
           {cartDescription}

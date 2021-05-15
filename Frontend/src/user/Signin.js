@@ -28,8 +28,8 @@ const Signin = () => {
       .then((data) => {
         console.log("DATA:", data);
         if (data.token) {
-          let sessionToken = data.token;
-          authenticate(sessionToken, () => {
+          //let sessionToken = data.token;
+          authenticate(data, () => {
             console.log("Token ADDED.");
             setValues({ ...values, didRedirect: true });
           });
@@ -41,7 +41,7 @@ const Signin = () => {
   };
 
   const performRedirect = () => {
-    if (isAuthenticated(email)) {
+    if (isAuthenticated()) {
       return <Redirect to="/" />;
     }
   };
