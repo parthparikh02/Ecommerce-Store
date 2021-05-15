@@ -60,15 +60,17 @@ def signin(request):
     except UserModel.DoesNotExist:
         return JsonResponse({'error': 'Invalid Email'})
 
-def getSessionToken(request,email):
+@csrf_exempt
+def getSessionToken(request):
     if not request.method == 'POST':
         return JsonResponse({'error': 'Send a post request with valid paramenter only'})
-        
+    
+    username = request.POST['email']
     UserModel = get_user_model()
     try:
-        user = UserModel.objects.get(email=email)
+        user = UserModel.objects.get(email = username)
         if user.session_token!="0":
-            return JsonResponse({'token':user.session_token})
+            return JsonResponse({'token': user.session_token})
         else:
             return JsonResponse({'token':""})
 

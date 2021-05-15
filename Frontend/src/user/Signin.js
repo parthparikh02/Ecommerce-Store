@@ -41,7 +41,7 @@ const Signin = () => {
   };
 
   const performRedirect = () => {
-    if (isAuthenticated()) {
+    if (isAuthenticated(email)) {
       return <Redirect to="/" />;
     }
   };

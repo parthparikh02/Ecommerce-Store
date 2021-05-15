@@ -41,13 +41,24 @@ export const authenticate = (data, next) => {
   }
 };
 
-export const isAuthenticated = () => {
+export const isAuthenticated = (email) => {
   if (typeof window == "undefined") {
     return false;
   }
   if (localStorage.getItem("jwt")) {
-    return JSON.parse(localStorage.getItem("jwt"));
-    //TODO: compare JWT with database json token
+    const formData = new FormData();
+    formData.append("email", email);
+
+    return fetch(`${API}user/token/`, {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        //console.log(data.token === JSON.parse(localStorage.getItem("jwt")));
+        return data.token === JSON.parse(localStorage.getItem("jwt"));
+      })
+      .catch((err) => console.error("error", err));
   } else {
     return false;
   }
