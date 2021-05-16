@@ -41,8 +41,8 @@ def process_payment(request, id , token):
     if not validate_user_session(id,token):
         return JsonResponse({'error':'Invalid session, Please login again!'})
     
-    nonce_from_the_client = request.POST["paymentMethodNounce"]
-    amount_from_the_client = request.POST["amount"]
+    nonce_from_the_client = request.POST['paymentMethodNounce']
+    amount_from_the_client = request.POST['amount']
 
     result = gateway.transaction.sale({
         "amount":amount_from_the_client,

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Base from "./Base";
 import Card from "./Card";
 import { loadCart } from "./helper/cartHelper";
+import PaymentB from "./PaymentB";
 
 const Cart = () => {
   const [products, setProducts] = useState([]);
@@ -36,8 +37,20 @@ const Cart = () => {
   return (
     <Base title="Cart Page" description="Welcome to checkout">
       <div className="row text-center">
-        <div className="col-6">{loadAllProducts(products)}</div>
-        <div className="col-6">{loadCheckout()}</div>
+        <div className="col-6">
+          {products.length > 0 ? (
+            loadAllProducts(products)
+          ) : (
+            <h4>No Products</h4>
+          )}
+        </div>
+        <div className="col-6">
+          {products.length > 0 ? (
+            <PaymentB products={products} setReload={setReload} />
+          ) : (
+            <h3>Please login Or add something in Cart.</h3>
+          )}
+        </div>
       </div>
     </Base>
   );
